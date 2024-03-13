@@ -1251,13 +1251,14 @@ class Form
      * @param array $messages
      * @return Validator
      */
-    public function validate($validationRules = [], $messages = [])
+    public function validate($validationRules = [], $messages = [], $dataToValidate = [])
     {
+        $dataToValidate = $dataToValidate ?: $this->getRequest()->all();
         $fieldRules = $this->formHelper->mergeFieldsRules($this->fields);
         $rules = array_merge($fieldRules->getRules(), $validationRules);
         $messages = array_merge($fieldRules->getMessages(), $messages);
 
-        $this->validator = $this->validatorFactory->make($this->getRequest()->all(), $rules, $messages);
+        $this->validator = $this->validatorFactory->make($dataToValidate, $rules, $messages);
         $this->validator->setAttributeNames($fieldRules->getAttributes());
 
         $this->eventDispatcher->dispatch(new BeforeFormValidation($this, $this->validator));
